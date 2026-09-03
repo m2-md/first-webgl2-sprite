@@ -8,19 +8,19 @@ const gl = canvas.getContext("webgl2");
 
 if (!gl) {
   document.body.innerHTML =
-    "<p>Bu tarayıcı WebGL2 desteklemiyor. Canvas2D'ye düşmek gerek 😢</p>";
-  throw new Error("WebGL2 context alınamadı");
+    "<p>This browser does not support WebGL2. Falling back to Canvas2D 😢</p>";
+  throw new Error("Could not acquire WebGL2 context");
 }
 
 const program = createProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER);
 gl.useProgram(program);
 
-// attribute ve uniform konumlarını programdan sor
+// Query attribute and uniform locations from program
 const aClip = gl.getAttribLocation(program, "a_clip");
 const aUv = gl.getAttribLocation(program, "a_uv");
 const uTexture = gl.getUniformLocation(program, "u_texture");
 
-// VAO: attribute yapılandırmasını hatırlayan nesne
+// VAO: object that remembers attribute configuration
 const vao = gl.createVertexArray();
 gl.bindVertexArray(vao);
 
@@ -28,24 +28,24 @@ const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
 const FLOAT = Float32Array.BYTES_PER_ELEMENT;
-const STRIDE = 4 * FLOAT; // köşe başına 4 float: clipX, clipY, u, v
+const STRIDE = 4 * FLOAT; // 4 floats per vertex: clipX, clipY, u, v
 
-// a_clip: her köşenin ilk 2 float'ı
+// a_clip: first 2 floats of each vertex
 gl.enableVertexAttribArray(aClip);
 gl.vertexAttribPointer(aClip, 2, gl.FLOAT, false, STRIDE, 0);
 
-// a_uv: her köşenin sonraki 2 float'ı (2 float ötelenmiş)
+// a_uv: next 2 floats of each vertex (offset by 2 floats)
 gl.enableVertexAttribArray(aUv);
 gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, STRIDE, 2 * FLOAT);
 
 const { data, size } = makeCheckerboard(64, 8);
 const texture = createTexture(gl, data, size);
 
-gl.activeTexture(gl.TEXTURE0); // 0 numaralı birim
+gl.activeTexture(gl.TEXTURE0); // texture unit 0
 gl.bindTexture(gl.TEXTURE_2D, texture);
-gl.uniform1i(uTexture, 0); // sampler'a "0'ı kullan" de
+gl.uniform1i(uTexture, 0); // tell sampler to "use unit 0"
 
-// Canvas'ı ekrana göre boyutla (devicePixelRatio, en fazla 2x)
+// Size canvas to screen (devicePixelRatio, max 2x)
 const resize = () => {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = Math.floor(canvas.clientWidth * dpr);
@@ -59,7 +59,7 @@ const resize = () => {
 window.addEventListener("resize", resize);
 resize();
 
-const SPRITE = 96; // piksel
+const SPRITE = 96; // pixels
 
 const fpsEl = document.querySelector<HTMLElement>("#fps-val");
 let lastTime = performance.now();
@@ -75,12 +75,12 @@ const frame = (now: number) => {
 
   const t = now / 1000;
 
-  // Ekran merkezinde dairesel yörünge
+  // Circular orbit around screen center
   const orbit = Math.min(canvas.width, canvas.height) * 0.25;
   const x = canvas.width / 2 - SPRITE / 2 + Math.cos(t) * orbit;
   const y = canvas.height / 2 - SPRITE / 2 + Math.sin(t) * orbit;
 
-  // Piksel düşüncesi → clip-space; sözlüğümüz her karede çalışıyor
+  // Pixel coords → clip-space; conversion runs every frame
   const verts = spriteQuad(x, y, SPRITE, SPRITE, canvas.width, canvas.height, t);
   gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
 

@@ -3,7 +3,7 @@ export interface Vec2 {
   y: number;
 }
 
-// Piksel konumu → clip-space (-1..1). y ekseni terslenir.
+// Pixel position → clip-space (-1..1). y axis is inverted.
 export function pixelToClip(
   px: number,
   py: number,
@@ -12,7 +12,7 @@ export function pixelToClip(
 ): Vec2 {
   return {
     x: (px / canvasW) * 2 - 1, // 0..1 → -1..1
-    y: 1 - (py / canvasH) * 2, // 0..1 → +1..-1 (y ters!)
+    y: 1 - (py / canvasH) * 2, // 0..1 → +1..-1 (y inverted!)
   };
 }
 
@@ -30,8 +30,8 @@ function rotateAround(
   return { x: cx + dx * c - dy * s, y: cy + dx * s + dy * c };
 }
 
-// Piksel-uzaydaki bir sprite'ı 6 köşelik interleaved clip+UV dizisine çevirir.
-// Dönüş: [clipX, clipY, u, v] × 6  →  Float32Array(24)
+// Converts a pixel-space sprite into a 6-vertex interleaved clip+UV array.
+// Return: [clipX, clipY, u, v] × 6  →  Float32Array(24)
 export function spriteQuad(
   x: number,
   y: number,
@@ -41,21 +41,21 @@ export function spriteQuad(
   canvasH: number,
   angle = 0,
 ): Float32Array {
-  const cx = x + w / 2; // sprite merkezi (piksel)
+  const cx = x + w / 2; // sprite center (pixels)
   const cy = y + h / 2;
 
-  // Köşeyi önce merkez etrafında döndür, sonra clip-space'e çevir
+  // First rotate corner around center, then convert to clip-space
   const corner = (px: number, py: number): Vec2 => {
     const r = rotateAround(px, py, cx, cy, angle);
     return pixelToClip(r.x, r.y, canvasW, canvasH);
   };
 
-  const tl = corner(x, y); // sol üst
-  const tr = corner(x + w, y); // sağ üst
-  const bl = corner(x, y + h); // sol alt
-  const br = corner(x + w, y + h); // sağ alt
+  const tl = corner(x, y); // top-left
+  const tr = corner(x + w, y); // top-right
+  const bl = corner(x, y + h); // bottom-left
+  const br = corner(x + w, y + h); // bottom-right
 
-  // İki üçgen: (TL, BL, TR) ve (TR, BL, BR). Her satır: clipX, clipY, u, v
+  // Two triangles: (TL, BL, TR) and (TR, BL, BR). Each row: clipX, clipY, u, v
   return new Float32Array([
     tl.x, tl.y, 0, 0,
     bl.x, bl.y, 0, 1,

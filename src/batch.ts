@@ -79,7 +79,7 @@ export function getAtlasRegions(): AtlasRegion[] {
 }
 
 /**
- * Şeffaf alpha kanallı bir Spritesheet / Atlas oluşturan yardımcı fonksiyon.
+ * Helper function that generates a spritesheet/atlas with a transparent alpha channel.
  */
 export function generateSpriteAtlas(size = 512): {
   canvas: HTMLCanvasElement;
@@ -96,10 +96,10 @@ export function generateSpriteAtlas(size = 512): {
 
   ctx.clearRect(0, 0, size, size);
 
-  // 2x2 grid = 4 sprite tipi
+  // 2x2 grid = 4 sprite types
   const half = size / 2;
 
-  // 1. Yıldız (Sol Üst)
+  // 1. Star (Top-Left)
   ctx.save();
   ctx.translate(half / 2, half / 2);
   const grad1 = ctx.createRadialGradient(0, 0, 10, 0, 0, half / 2 - 10);
@@ -112,7 +112,7 @@ export function generateSpriteAtlas(size = 512): {
   ctx.fill();
   ctx.restore();
 
-  // 2. Mavi Mücevher (Sağ Üst)
+  // 2. Blue Gem (Top-Right)
   ctx.save();
   ctx.translate(half + half / 2, half / 2);
   const grad2 = ctx.createRadialGradient(0, 0, 10, 0, 0, half / 2 - 10);
@@ -125,7 +125,7 @@ export function generateSpriteAtlas(size = 512): {
   ctx.fill();
   ctx.restore();
 
-  // 3. Kırmızı Alev / Enerji (Sol Alt)
+  // 3. Red Flame / Energy (Bottom-Left)
   ctx.save();
   ctx.translate(half / 2, half + half / 2);
   const grad3 = ctx.createRadialGradient(0, 0, 10, 0, 0, half / 2 - 10);
@@ -138,7 +138,7 @@ export function generateSpriteAtlas(size = 512): {
   ctx.fill();
   ctx.restore();
 
-  // 4. Yeşil Küre (Sağ Alt)
+  // 4. Green Orb (Bottom-Right)
   ctx.save();
   ctx.translate(half + half / 2, half + half / 2);
   const grad4 = ctx.createRadialGradient(0, 0, 10, 0, 0, half / 2 - 10);
@@ -155,8 +155,8 @@ export function generateSpriteAtlas(size = 512): {
 }
 
 /**
- * CPU üzerindeki tüm sprite nesnelerini tek bir Float32Array içinde 
- * 6 köşe × 5 float olarak toplar.
+ * Gathers all CPU sprite instances into a single Float32Array
+ * as 6 vertices × 5 floats per quad.
  */
 export function buildBatchBuffer(
   sprites: SpriteInstance[],
@@ -175,14 +175,14 @@ export function buildBatchBuffer(
     const cos = Math.cos(s.rotation);
     const sin = Math.sin(s.rotation);
 
-    // Sprite merkez etrafındaki yerel köşeler (-w2..w2, -h2..h2)
-    // Sol-üst, sağ-üst, sol-alt, sağ-alt
+    // Local corners around sprite center (-w2..w2, -h2..h2)
+    // Top-left, top-right, bottom-left, bottom-right
     const lx1 = -w2, ly1 = -h2;
     const lx2 = w2,  ly2 = -h2;
     const lx3 = -w2, ly3 = h2;
     const lx4 = w2,  ly4 = h2;
 
-    // Dönüş ve dünya piksel konumu
+    // Rotation and world pixel positions
     const px1 = s.x + (lx1 * cos - ly1 * sin);
     const py1 = s.y + (lx1 * sin + ly1 * cos);
 
@@ -195,7 +195,7 @@ export function buildBatchBuffer(
     const px4 = s.x + (lx4 * cos - ly4 * sin);
     const py4 = s.y + (lx4 * sin + ly4 * cos);
 
-    // Clip Space dönüşümü
+    // Clip Space transform
     const c1 = pixelToClip(px1, py1, canvasW, canvasH);
     const c2 = pixelToClip(px2, py2, canvasW, canvasH);
     const c3 = pixelToClip(px3, py3, canvasW, canvasH);
@@ -205,13 +205,13 @@ export function buildBatchBuffer(
     const u1 = s.uvMax.x, v1 = s.uvMax.y;
     const a = s.alpha;
 
-    // 2 Üçgen: (c1, c3, c2) ve (c2, c3, c4)
-    // Üçgen 1: Sol Üst, Sol Alt, Sağ Üst
+    // 2 Triangles: (c1, c3, c2) and (c2, c3, c4)
+    // Triangle 1: Top-Left, Bottom-Left, Top-Right
     outputBuffer[offset++] = c1.x; outputBuffer[offset++] = c1.y; outputBuffer[offset++] = u0; outputBuffer[offset++] = v0; outputBuffer[offset++] = a;
     outputBuffer[offset++] = c3.x; outputBuffer[offset++] = c3.y; outputBuffer[offset++] = u0; outputBuffer[offset++] = v1; outputBuffer[offset++] = a;
     outputBuffer[offset++] = c2.x; outputBuffer[offset++] = c2.y; outputBuffer[offset++] = u1; outputBuffer[offset++] = v0; outputBuffer[offset++] = a;
 
-    // Üçgen 2: Sağ Üst, Sol Alt, Sağ Alt
+    // Triangle 2: Top-Right, Bottom-Left, Bottom-Right
     outputBuffer[offset++] = c2.x; outputBuffer[offset++] = c2.y; outputBuffer[offset++] = u1; outputBuffer[offset++] = v0; outputBuffer[offset++] = a;
     outputBuffer[offset++] = c3.x; outputBuffer[offset++] = c3.y; outputBuffer[offset++] = u0; outputBuffer[offset++] = v1; outputBuffer[offset++] = a;
     outputBuffer[offset++] = c4.x; outputBuffer[offset++] = c4.y; outputBuffer[offset++] = u1; outputBuffer[offset++] = v1; outputBuffer[offset++] = a;

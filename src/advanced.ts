@@ -12,15 +12,15 @@ const canvas = document.querySelector<HTMLCanvasElement>("#scene")!;
 const gl = canvas.getContext("webgl2");
 
 if (!gl) {
-  document.body.innerHTML = "<p style='color:white;padding:20px'>WebGL2 desteklenmiyor 😢</p>";
-  throw new Error("WebGL2 context alınamadı");
+  document.body.innerHTML = "<p style='color:white;padding:20px'>WebGL2 not supported 😢</p>";
+  throw new Error("Could not acquire WebGL2 context");
 }
 
-// 1. Alpha Blending (Şeffaflık) Etkinleştirme
+// 1. Enable Alpha Blending
 gl.enable(gl.BLEND);
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-// 2. Batch Shader Programını Derleme
+// 2. Compile Batch Shader Program
 const { vertexShader, fragmentShader } = createBatchShaders();
 const program = createProgram(gl, vertexShader, fragmentShader);
 gl.useProgram(program);
@@ -30,7 +30,7 @@ const aUv = gl.getAttribLocation(program, "a_uv");
 const aAlpha = gl.getAttribLocation(program, "a_alpha");
 const uTexture = gl.getUniformLocation(program, "u_texture");
 
-// 3. Buffer Yapılandırması (En fazla 25,000 sprite destekler)
+// 3. Buffer Configuration (supports up to 25,000 sprites)
 const MAX_SPRITES = 25000;
 const MAX_FLOATS = MAX_SPRITES * FLOATS_PER_QUAD;
 const cpuBuffer = new Float32Array(MAX_FLOATS);
@@ -54,7 +54,7 @@ gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, STRIDE, 2 * FLOAT);
 gl.enableVertexAttribArray(aAlpha);
 gl.vertexAttribPointer(aAlpha, 1, gl.FLOAT, false, STRIDE, 4 * FLOAT);
 
-// 4. Spritesheet Atlas Dokusu Oluşturma
+// 4. Create Spritesheet Atlas texture
 const { canvas: atlasCanvas, regions } = generateSpriteAtlas(512);
 
 let currentTexture = gl.createTexture()!;
@@ -62,7 +62,7 @@ const initTexture = (source: HTMLCanvasElement | HTMLImageElement) => {
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, currentTexture);
   gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // Y ekseni düzgün yüklensin
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // Load Y axis right side up
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -73,7 +73,7 @@ const initTexture = (source: HTMLCanvasElement | HTMLImageElement) => {
 
 initTexture(atlasCanvas);
 
-// Artistik Varsayılan Görseli Yükle
+// Load Default Artistic Image
 const defaultArtisticImg = new Image();
 defaultArtisticImg.onload = () => {
   if (!isCustomTexture) {
@@ -82,7 +82,7 @@ defaultArtisticImg.onload = () => {
 };
 defaultArtisticImg.src = "/artistic_atlas.jpg";
 
-// 5. Canvas Boyutlandırma
+// 5. Canvas Resizing
 const resize = () => {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = Math.floor(canvas.clientWidth * dpr);
@@ -96,7 +96,7 @@ const resize = () => {
 window.addEventListener("resize", resize);
 resize();
 
-// 6. Sprite Örnekleri Oluşturma
+// 6. Create Sprite Instances
 let targetSpriteCount = 2500;
 let isCustomTexture = false;
 let customAspect = 1;
@@ -131,7 +131,7 @@ const syncSpriteCount = () => {
     sprites.length = targetSpriteCount;
   }
 
-  // Eğer 1 sprite varsa ekran ortasına koy ve büyük göster
+  // If 1 sprite, center on screen and display large
   if (targetSpriteCount === 1 && sprites.length > 0) {
     const s = sprites[0];
     const cw = canvas.width || 800;
@@ -150,7 +150,7 @@ const syncSpriteCount = () => {
 };
 syncSpriteCount();
 
-// 7. Kullanıcı Kontrolleri (UI Events)
+// 7. User Controls (UI Events)
 const slider = document.querySelector<HTMLInputElement>("#sprite-slider")!;
 const countLabel = document.querySelector<HTMLElement>("#count-label")!;
 const spriteCountVal = document.querySelector<HTMLElement>("#sprite-count-val")!;
@@ -172,13 +172,13 @@ blendToggle?.addEventListener("change", () => {
   if (blendToggle.checked) {
     gl.enable(gl.BLEND);
     if (blendStatusVal) {
-      blendStatusVal.textContent = "AÇIK";
+      blendStatusVal.textContent = "ON";
       blendStatusVal.classList.add("highlight");
     }
   } else {
     gl.disable(gl.BLEND);
     if (blendStatusVal) {
-      blendStatusVal.textContent = "KAPALI";
+      blendStatusVal.textContent = "OFF";
       blendStatusVal.classList.remove("highlight");
     }
   }
@@ -200,13 +200,13 @@ pngUpload?.addEventListener("change", (e) => {
       customAspect = img.width / img.height;
 
       if (textureTypeVal) {
-        textureTypeVal.textContent = `Yüklendi: ${img.width}x${img.height}`;
+        textureTypeVal.textContent = `Loaded: ${img.width}x${img.height}`;
       }
       if (resetAtlasBtn) {
         resetAtlasBtn.style.display = "block";
       }
 
-      // Sprite'ları yeni doku oranına ve UV'ye göre güncelle
+      // Update sprites to new texture aspect ratio and UVs
       for (const s of sprites) {
         s.uvMin = { x: 0, y: 0 };
         s.uvMax = { x: 1, y: 1 };
@@ -227,7 +227,7 @@ resetAtlasBtn?.addEventListener("click", () => {
   }
   isCustomTexture = false;
   customAspect = 1;
-  if (textureTypeVal) textureTypeVal.textContent = "Artistik Atlas (8x8 Grid)";
+  if (textureTypeVal) textureTypeVal.textContent = "Artistic Atlas (8x8 Grid)";
   if (resetAtlasBtn) resetAtlasBtn.style.display = "none";
   if (pngUpload) pngUpload.value = "";
 
@@ -241,7 +241,7 @@ resetAtlasBtn?.addEventListener("click", () => {
   syncSpriteCount();
 });
 
-// 8. Render Döngüsü
+// 8. Render Loop
 let lastTime = performance.now();
 let frameCount = 0;
 
@@ -255,7 +255,7 @@ const frame = (now: number) => {
     lastTime = now;
   }
 
-  // Hareket güncelleme (Fizik & Kenarlardan Sekme)
+  // Motion update (Physics & Edge Bouncing)
   const cw = canvas.width;
   const ch = canvas.height;
   for (let i = 0; i < sprites.length; i++) {
@@ -270,15 +270,15 @@ const frame = (now: number) => {
     if (s.y > ch) { s.y = ch; s.vy *= -1; }
   }
 
-  // CPU buffer doldurma
+  // Populate CPU buffer
   const renderedCount = buildBatchBuffer(sprites, cw, ch, cpuBuffer);
   const floatCount = renderedCount * FLOATS_PER_QUAD;
 
-  // GPU Buffer güncelleme (Tek SubData aktarımı)
+  // Update GPU Buffer (single SubData transfer)
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, cpuBuffer.subarray(0, floatCount));
 
-  // Temizleme ve Tek Draw Call ile Çizim!
+  // Clear and render with a single Draw Call!
   gl.clearColor(0.05, 0.06, 0.1, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
 

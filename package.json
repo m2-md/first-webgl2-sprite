@@ -1,7 +1,7 @@
 {
   "name": "first-webgl2-sprite",
   "version": "1.0.0",
-  "description": "İlk WebGL2 sprite: shader derleme, prosedürel doku, dokulu quad ve clip-space matematiği.",
+  "description": "Minimal raw WebGL2 textured quad renderer: GLSL ES 3.00 shader compilation, procedural checkerboard texture upload, vertex array objects, and clip-space math.",
   "type": "module",
   "license": "MIT",
   "scripts": {

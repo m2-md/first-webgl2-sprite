@@ -1,31 +1,31 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gelişmiş WebGL2 Sprite — Alpha Blending, PNG & Batching</title>
+    <title>Advanced WebGL2 Sprite — Alpha Blending, PNG & Batching</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <!-- Nav Header -->
     <header class="app-header">
       <a href="/index.html" class="nav-link">
-        <span>1. Temel Sprite (Dama)</span>
+        <span>1. Basic Sprite (Checkerboard)</span>
       </a>
       <a href="/advanced.html" class="nav-link active">
-        <span>2. Gelişmiş Batching & PNG Alpha</span>
+        <span>2. Advanced Batching & PNG Alpha</span>
       </a>
     </header>
 
     <!-- Stats HUD -->
     <div class="hud-panel">
-      <div class="hud-title">Batch Rendering Motoru</div>
+      <div class="hud-title">Batch Rendering Engine</div>
       <div class="hud-metric">
         <span class="hud-label">FPS:</span>
         <span id="fps-val" class="hud-value highlight">60</span>
       </div>
       <div class="hud-metric">
-        <span class="hud-label">Aktif Sprite:</span>
+        <span class="hud-label">Active Sprites:</span>
         <span id="sprite-count-val" class="hud-value">2,500</span>
       </div>
       <div class="hud-metric">
@@ -34,10 +34,10 @@
       </div>
       <div class="hud-metric">
         <span class="hud-label">Alpha Blending:</span>
-        <span id="blend-status-val" class="hud-value highlight">AÇIK</span>
+        <span id="blend-status-val" class="hud-value highlight">ON</span>
       </div>
       <div class="hud-metric">
-        <span class="hud-label">Doku Kaynağı:</span>
+        <span class="hud-label">Texture Source:</span>
         <span id="texture-type-val" class="hud-value">RGBA Spritesheet</span>
       </div>
     </div>
@@ -45,12 +45,12 @@
     <!-- Control Panel Overlay -->
     <div class="control-panel">
       <div class="control-title">
-        <span>Performans & Ayarlar</span>
+        <span>Performance & Settings</span>
       </div>
 
       <div class="control-group">
         <div class="control-label">
-          <span>Sprite Sayısı</span>
+          <span>Sprite Count</span>
           <span id="count-label" class="hud-value">2500</span>
         </div>
         <input
@@ -66,7 +66,7 @@
 
       <div class="control-group">
         <label class="toggle-switch">
-          <span>Alpha Blending (Şeffaflık)</span>
+          <span>Alpha Blending (Transparency)</span>
           <input type="checkbox" id="blend-toggle" class="toggle-input" checked />
           <span class="toggle-slider"></span>
         </label>
@@ -74,11 +74,11 @@
 
       <div class="control-group" style="display: flex; gap: 8px; flex-direction: column;">
         <label class="btn-file">
-          📁 Kendi PNG Görselini Yükle
+          📁 Upload Custom PNG Image
           <input type="file" id="png-upload" accept="image/png, image/jpeg, image/webp" />
         </label>
         <button id="reset-atlas-btn" class="btn-action" style="display: none;">
-          🔄 Varsayılan Atlasa Dön
+          🔄 Reset to Default Atlas
         </button>
       </div>
     </div>
