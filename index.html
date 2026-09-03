@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temel WebGL2 Sprite — Tek Doku Quad</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Nav Header -->
+    <header class="app-header">
+      <a href="/index.html" class="nav-link active">
+        <span>1. Temel Sprite (Dama)</span>
+      </a>
+      <a href="/advanced.html" class="nav-link">
+        <span>2. Gelişmiş Batching & PNG Alpha</span>
+      </a>
+    </header>
+
+    <!-- Stats HUD -->
+    <div class="hud-panel">
+      <div class="hud-title">Temel WebGL2 Render</div>
+      <div class="hud-metric">
+        <span class="hud-label">FPS:</span>
+        <span id="fps-val" class="hud-value highlight">60</span>
+      </div>
+      <div class="hud-metric">
+        <span class="hud-label">Sprite Sayısı:</span>
+        <span class="hud-value">1</span>
+      </div>
+      <div class="hud-metric">
+        <span class="hud-label">Draw Calls:</span>
+        <span class="hud-value highlight">1</span>
+      </div>
+      <div class="hud-metric">
+        <span class="hud-label">Mod:</span>
+        <span class="hud-value">Tek Buffer / Quad</span>
+      </div>
+    </div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="scene"></canvas>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

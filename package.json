@@ -1,0 +1,21 @@
+{
+  "name": "first-webgl2-sprite",
+  "version": "1.0.0",
+  "description": "İlk WebGL2 sprite: shader derleme, prosedürel doku, dokulu quad ve clip-space matematiği.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "bench": "vite-node src/bench-cli.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^5.9.0",
+    "vite": "^6.0.0",
+    "vite-node": "^2.1.0",
+    "vitest": "^2.1.0"
+  }
+}
