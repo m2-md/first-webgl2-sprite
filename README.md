@@ -1,16 +1,16 @@
-# first-webgl2-sprite
+# First WebGL2 Textured Sprite from Scratch
 
 <!-- LINKS:BEGIN — üretildi: scripts/sync-repo-links.py · elle düzenleme -->
 **▶ [Live demo](https://m2-md.github.io/first-webgl2-sprite/)** · [Source](https://github.com/m2-md/first-webgl2-sprite)
 <!-- LINKS:END -->
+
+> Minimal raw WebGL2 textured quad renderer: GLSL ES 3.00 shader compilation, procedural checkerboard texture upload, vertex array objects, and clip-space math.
 
 A minimal WebGL2 example that leaves behind the comfort of Canvas2D's `drawImage`
 and talks to the GPU in its native language — clip space. Shader compilation, a
 procedural texture (a checkerboard), a textured quad and the first WebGL2 sprite
 spinning on screen. The first stone on the road to batching, which packs thousands
 of sprites into a single draw call.
-
-Article: `articles/first-webgl2-sprite/article.md`
 
 ## What's in here
 
