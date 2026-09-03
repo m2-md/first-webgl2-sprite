@@ -1,5 +1,9 @@
 # first-webgl2-sprite
 
+<!-- LINKS:BEGIN — üretildi: scripts/sync-repo-links.py · elle düzenleme -->
+**▶ [Live demo](https://m2-md.github.io/first-webgl2-sprite/)** · [Source](https://github.com/m2-md/first-webgl2-sprite)
+<!-- LINKS:END -->
+
 A minimal WebGL2 example that leaves behind the comfort of Canvas2D's `drawImage`
 and talks to the GPU in its native language — clip space. Shader compilation, a
 procedural texture (a checkerboard), a textured quad and the first WebGL2 sprite
